@@ -14,5 +14,8 @@ Following objective is achived:
 ####Bloack Diagram of circuit
 ![Block Diagram](https://github.com/MishraShivendra/node_mcu_py_email/blob/master/block.png)
 
+####Environment
+Node MCU and Python 2.7.3
+
 ####Extension(TBD)
 1. Yet to add a thread to read temprature data from server(Node MCU) and plot a graph.
