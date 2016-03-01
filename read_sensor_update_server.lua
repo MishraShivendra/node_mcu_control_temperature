@@ -1,3 +1,9 @@
+--Author: Shivendra Mishra
+--Env: Node MCU v0.9
+--Created: 1-Mar-2016
+--Description: Following script reads temprature sensor data through a analog switch and updates them 
+--             on http server (of Node MCU).
+
 --Prepare to get connected
 wifi.setmode(wifi.STATION)
 wifi.sta.config("our_wifi","wifi_pwd")
