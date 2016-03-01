@@ -1,3 +1,10 @@
+'''
+Author: Shivendra Mishra
+Env: Python 2.7.3 in Linux
+Created: 1-Mar-2016
+Description: Following methods read temprature sensor data triggers an e-mail if temprature reaches thersold.
+'''
+
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.MIMEText import MIMEText
