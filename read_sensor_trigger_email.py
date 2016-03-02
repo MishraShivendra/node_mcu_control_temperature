@@ -1,8 +1,8 @@
 '''
 Author: Shivendra Mishra
-Env: Python 2.7.3 in Linux
+Environment: Python 2.7.3 in Linux
 Created: 1-Mar-2016
-Description: Following methods read temprature sensor data triggers an e-mail if temprature reaches thersold.
+Description: Following methods read temperature sensor data triggers an E-mail if temperature reaches threshold.
 '''
 
 import smtplib
@@ -11,7 +11,7 @@ from email.MIMEText import MIMEText
 import urllib2
 import time
 
-# Following function get temprature readings from local server(Node Mcu)
+# Following function get temperature readings from local server(Node Mcu)
 def get_data_from_sensor():
     response = urllib2.urlopen('http://192.168.11.184')
     html = response.read()
@@ -39,7 +39,7 @@ def send_email():
     server.sendmail(fromaddr, toaddr, text)
 
 if __name__ == "__main__":
-	#Get the tempareture, test if this is state change - if so trigger email.
+	#Get the temperature, test if this is state change - if so trigger email.
     while True:
         sensor_readings = get_data_from_sensor()
 		#Check out her temper every 30 sec.
