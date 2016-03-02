@@ -4,7 +4,7 @@ Following objective is achived:
 
 |**No.**| **Operation**                             |  **File name**                                           |
 |-------|-------------------------------------------|----------------------------------------------------------|
-|1. | a) Read temprature readings from LMT84 temprature sensor. <br /> b) Upadte the readings on Http server (Node MCU).    | [read_sensor_update_server.lua](https://github.com/MishraShivendra/node_mcu_py_email/blob/master/read_sensor_update_server.lua)|
+|1. | a) Read temprature readings from LMT84 temprature sensor. <br /> b) Update the readings on Http server (Node MCU).    | [read_sensor_update_server.lua](https://github.com/MishraShivendra/node_mcu_py_email/blob/master/read_sensor_update_server.lua)|
 |2. | a) Read temprature sensor data from Http server (Node MCU). <br /> b) Trigger an e-mail if event happens | [read_sensor_trigger_email.py](https://github.com/MishraShivendra/node_mcu_py_email/blob/master/read_sensor_trigger_email.py)| 
 
 ####How to use?
