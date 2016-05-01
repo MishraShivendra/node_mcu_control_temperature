@@ -17,3 +17,6 @@ Following objective is achieved:
 
 ####Environment
 Node MCU v0.9 and Python 2.7.3
+
+####Demo Video
+[Here](https://youtu.be/NXFKr1k28os) is a demo video, shows temperature sensor data plotted on Graphite. 
