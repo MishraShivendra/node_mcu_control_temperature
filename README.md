@@ -4,7 +4,7 @@ Following objective is achieved:
 
 |**No.**| **Operation**                             |  **File name**                                           |
 |-------|-------------------------------------------|----------------------------------------------------------|
-|1. | a) Read temperature readings from LMT84 temperature sensor. <br /> b) Update the readings on HTTP server (Node MCU).    | [read_sensor_update_server.lua](https://github.com/MishraShivendra/node_mcu_py_email/blob/master/read_sensor_update_server.lua)|
+|1. | a) Read temperature readings from LMT84 temperature sensor. <br /> b) Allow access of temperature with the help of REST APIs <br /> c) Allow control of actuators through Rest APIs | [read_sensor_update_server.lua](https://github.com/MishraShivendra/node_mcu_py_email/blob/master/read_sensor_update_server.lua), [rest_api_control.lua](https://github.com/MishraShivendra/node_mcu_py_email/blob/master/rest_api_control.lua)|
 |2. | a) Read temperature sensor data from HTTP server (Node MCU). <br /> b) Trigger an E-mail if event happens | [read_sensor_trigger_email.py](https://github.com/MishraShivendra/node_mcu_py_email/blob/master/read_sensor_trigger_email.py)|
 |3. | a) Push Data to Graphite | [feed_data_tographite.sh] (https://github.com/MishraShivendra/node_mcu_py_email/blob/master/feed_data_tographite.sh)
 
