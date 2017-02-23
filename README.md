@@ -1,4 +1,4 @@
-# Interfacing Node MCU with LMT84LP temperature sensor
+# Interfacing Node MCU with LMT84LP temperature sensor and controlling Actuator 
 ####What does it do?
 Following objective is achieved:
 
