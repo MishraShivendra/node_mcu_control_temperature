@@ -196,16 +196,16 @@ srv:listen(80,function(c)
 		elseif (string.find(payload, "POST /power/three") ~= nil) then
 			ctrl_power("3")
 			file.write( "3" )
-		elseif (string.find(payload, "GET /temp/one") ~= nil) then
+		elseif (string.find(payload, "GET /temp?sensor=1") ~= nil) then
 			temp=record_sensor("1")
 			temp_flag=1
-		elseif (string.find(payload, "GET /temp/two") ~= nil) then
+		elseif (string.find(payload, "GET /temp?sensor=2") ~= nil) then
 			temp=record_sensor("2")
 			temp_flag=1
-		elseif (string.find(payload, "GET /temp/three") ~= nil) then
+		elseif (string.find(payload, "GET /temp?sensor=3") ~= nil) then
 			temp=record_sensor("3")
 			temp_flag=1
-		elseif (string.find(payload, "GET /temp/four") ~= nil) then
+		elseif (string.find(payload, "GET /temp?sensor=4") ~= nil) then
 			temp=record_sensor("4")
 			temp_flag=1
 		end
