@@ -1,3 +1,8 @@
+-- Notice: All parts of this code is protected
+-- with following license:
+-- https://github.com/MishraShivendra/node_mcu_py_email/blob/master/LICENSE.md
+-- Corporate/commercial usage is restricted.
+
 -- Author: Shivendra Mishra
 -- Environment: Node MCU v0.9
 -- Created: 1-Mar-2016
