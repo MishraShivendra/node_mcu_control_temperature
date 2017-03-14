@@ -144,7 +144,11 @@ function record_sensor( sensor_name )
 		--Read Sensor one
 		gpio.write(select_1,gpio.LOW); 
 		gpio.write(select_2,gpio.LOW); 
-		sensor_one_reading = adc.read(0); 
+		sensor_one_reading = adc.read(0);
+		-- Ok, I have adopted these numbers from
+		-- http://www.ti.com/lit/ds/symlink/lmt84.pdf pp. 10, 11
+		-- and tuned a little bit based on my environment - This 
+		-- might change a bit.
 		return ((((345-sensor_one_reading)*100)/187)-12); 
 	elseif sensor_name == "2" then
 		--Read Sensor Two
