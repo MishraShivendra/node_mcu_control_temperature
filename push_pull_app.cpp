@@ -6,63 +6,15 @@
 // Author : Shivendra Mishra
 // Env: gcc 5.4 on Linux Ubuntu 16.04 
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <sstream>
-#include <fstream>
-#include <map>
-#include <new>
-#include <cppconn/driver.h>
-#include <cppconn/exception.h>
-#include <cppconn/resultset.h>
-#include <cppconn/statement.h>
-#include <curl/curl.h>
-#include <getopt.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <pwd.h>
-#include <err.h>
-#include "mysql_connection.h"
+#include "push_pull_app.h"
 
-#define SQL_ADDRESS "sql_address"
-#define SQL_USER "sql_user"
-#define SQL_PASSWORD "sql_password"
-#define NODE_ADDRESS "node_address"
-#define NODE_PORT "node_port"
-
-using namespace std;
-
-class pp_daemon
-{
-	CURL *curl;
-	CURLcode curl_res;
-	string data;
-	sql::Driver *driver;
-	sql::Connection *con;
-	sql::Statement *stmt;
-	sql::ResultSet *res;
-	vector <string> temp_values;
-	map<string, string> valid_attrs;
-
-	public:
-		pp_daemon( int argc, char** argv );
-		~pp_daemon( void );
-		void conn_and_get( void );
-		void get_temperature( const string& sensor_number );
-		string push_data_to_db( void );
-		void read_set_conf( int argc, char** argv );
-		void parse_cli_load_conf( string file_name, int argc,
-					  char** cli_argv );
-		void show_help ( void );
-		void load_conf_attr( string &file_name );
-		bool test_if_file_exists( string &file_name );
-		string get_home_dir( void );
-		bool test_if_dir_exists( string& path );
-		void show_args();
-		void cleanup();		
-};
-
+// It will init various things like libcurl
+// sql connector etc.
+// Note to future self: We do following things in sequence:
+// 1. init - configuration from file or CLI, libcurl, sql connector  
+// 2. Ask readings to node - will go to callback - then 
+//    will be written to container.
+// 3. Push readings to DB and cleanup container. 
 pp_daemon::pp_daemon( int argc, char** argv )
 {
 	valid_attrs = { {NODE_ADDRESS, ""}, { NODE_PORT, "" }, 
@@ -95,6 +47,7 @@ pp_daemon::~pp_daemon( void )
 	curl_easy_cleanup(curl);
 }
 
+// Callback to get data from node mcu
 static size_t temp_value_write_callback( void *contents, size_t size, 
 					     size_t nmemb, string* data )
 {
@@ -115,7 +68,7 @@ static size_t temp_value_write_callback( void *contents, size_t size,
 	return size*nmemb;
 }
 
-
+// Make call to all four APIs and set libcurl options.
 void pp_daemon::get_temperature( const string& sensor_name )
 {
 
@@ -139,6 +92,7 @@ void pp_daemon::get_temperature( const string& sensor_name )
  	}
 }
 
+// Get readings.
 void pp_daemon::conn_and_get( void )
 {
 	// I have 1 to whatever number of values to get.
@@ -154,6 +108,8 @@ void pp_daemon::conn_and_get( void )
 		data = "";
 	}
 }
+
+// Show configuration, will be called for -D
 void pp_daemon::show_args( void )
 {
 	for( map<string,string>::iterator i = valid_attrs.begin(); 
@@ -163,9 +119,11 @@ void pp_daemon::show_args( void )
 
 }
 
+// Push data to DB
 string pp_daemon::push_data_to_db( void )
 {
 	string ID;
+	// First of all get ID (our primary key)
 	try {
 		
 		stmt = con->createStatement();
@@ -179,13 +137,14 @@ string pp_daemon::push_data_to_db( void )
 	} catch (sql::SQLException &e) {
 		cout<<"Failed to get current ID:"<<e.what()<<endl;
 	}
+	// Increment
 	{
 		int id = atoi(ID.c_str()) + 1;
 		ostringstream id_oss;
 		id_oss<<id;
 		ID = id_oss.str();
 	}
-
+	// Push readings with ID.
 	try{
 		// We will assume that a table already exists in the 
 		// DB and we are just making entry to it .
@@ -215,12 +174,14 @@ string pp_daemon::push_data_to_db( void )
 	}
 }
 
+// Test if configuration file exists 
 bool pp_daemon::test_if_file_exists( string &file_name ) 
 {
 	ifstream file_tester( file_name );
 	return file_tester.good();
 }
 
+// Read and load configuration to container
 void pp_daemon::load_conf_attr( string &file_name )
 {
 	ifstream conf_reader( file_name );
@@ -237,6 +198,7 @@ void pp_daemon::load_conf_attr( string &file_name )
 	}
 }
 
+// Help - Help
 void pp_daemon::show_help ( void ) {
 	cout <<"\nPP App options:\n"<<endl;
 	cout <<"-h, --help         Show this help and exit."<<endl;
@@ -250,6 +212,7 @@ void pp_daemon::show_help ( void ) {
 }
 
 
+// Process CLI for configuration
 void pp_daemon::parse_cli_load_conf( string file_name, int argc, 
 				     char** argv )
 {
@@ -299,6 +262,8 @@ void pp_daemon::parse_cli_load_conf( string file_name, int argc,
 	
 }
 
+// Test if configuration directory exists.
+// It is $HOME/.pp_app/
 bool pp_daemon::test_if_dir_exists( string& path )
 {
 	struct stat info;
@@ -308,6 +273,7 @@ bool pp_daemon::test_if_dir_exists( string& path )
 	return false;    	
 }
 
+// Get home directory mainly on Linux
 string pp_daemon::get_home_dir( void )
 {
 	string homedir = getenv("HOME");
@@ -320,12 +286,15 @@ string pp_daemon::get_home_dir( void )
 	return homedir;
 }
 
-
+// If configuration dir doesn't exists - create it.
+// If configuration file doesn't exist - try to read 
+// CLI and load configuration to container.
+// If any configuration is not then show error and demand it. 
 void pp_daemon::read_set_conf( int argc, char** argv )
 {
 	
 	
-	//
+	// For Linux at the moment, will add windows here
 	string dir = ".pp_app";
 #ifdef __linux__
 	dir = get_home_dir() + "/" + dir;
@@ -338,15 +307,21 @@ void pp_daemon::read_set_conf( int argc, char** argv )
 #endif
 	string file_name = dir + "pp_app.conf";
 	if( test_if_file_exists( file_name ) ) {
+#ifdef DEBUG
 		cout<<"Loading conf"<<endl;
+#endif
 		load_conf_attr( file_name );		
 	}else{
+#ifdef DEBUG
 		cout<<"processing cli"<<endl;
+#endif
 		parse_cli_load_conf( file_name, argc, argv );
 	}
 	for( map<string,string>::iterator i = valid_attrs.begin(); 
 	     i != valid_attrs.end(); ++i ) {
+#ifdef DEBUG
 		cout<<"Val:"<<i->first<<" "<<i->second<<endl;
+#endif
 		if( i->second == "" ) {
 			cerr<<"Configuration parameters are missing."<<endl;
 			show_help();
@@ -356,6 +331,7 @@ void pp_daemon::read_set_conf( int argc, char** argv )
 	}
 }
 
+// Cleanup container after reading a set of readings.
 void pp_daemon::cleanup( ) 
 {
 	temp_values.erase( temp_values.begin(), temp_values.end() );
