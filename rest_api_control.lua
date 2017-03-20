@@ -24,9 +24,19 @@
 -- timer two does.
 
 -- Let's connect to network. 
+ssid=''
+password=''
 wifi.sta.disconnect();
 wifi.setmode(wifi.STATION); 
-wifi.sta.config("That_neighbour","shivendra332211"); 
+fs_files = file.list()
+-- Read WLAN configuration from conf file.
+if fs_files["wifi_credentials.conf"] then
+	file.open( "wifi_credentials.conf", "r")
+	ssid=file.readline()
+	password=file.readline()
+	file.close()
+end
+wifi.sta.config(ssid, password); 
 print(wifi.sta.getip()); 
 wifi.sta.autoconnect (1);
 -- WLAN related reset alarm. Timeout period 20 sec.
@@ -234,4 +244,4 @@ srv:listen(80,function(c)
       			node.restart()
 		end)
 	end)
-end)  
+end)
