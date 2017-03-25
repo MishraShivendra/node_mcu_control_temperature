@@ -50,7 +50,7 @@ class pp_daemon
 		~pp_daemon( void );
 		void conn_and_get( void );
 		void get_temperature( const string& sensor_number );
-		string push_data_to_db( void );
+		void push_data_to_db( void );
 		void read_set_conf( int argc, char** argv );
 		void parse_cli_load_conf( string file_name, int argc,
 					  char** cli_argv );

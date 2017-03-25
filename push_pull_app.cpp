@@ -120,7 +120,7 @@ void pp_daemon::show_args( void )
 }
 
 // Push data to DB
-string pp_daemon::push_data_to_db( void )
+void pp_daemon::push_data_to_db( void )
 {
 	string ID;
 	// First of all get ID (our primary key)
