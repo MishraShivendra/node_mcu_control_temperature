@@ -8,9 +8,9 @@ debug: $(GEN_BIN_DEBUG)
 	$(CC) $(CFLAGS) $(DFLAGS) $(SRCS) $(INCLUDES) $(LFLAGS) -o $(TARGET_DIR)/$(OBJS) $(LIBS)
 bin_debug: 
 	@if [ ! -d $(TARGET_DIR) ]; then mkdir $(TARGET_DIR); fi
-	$(CC) $(BIN_CFLAGS) $(SRCS) $(INCLUDES) $(LFLAGS) -o $(TARGET_DIR)/$(TARGET_DIR) $(LIBS)
+	$(CC) $(BIN_CFLAGS) $(SRCS) $(INCLUDES) $(LFLAGS) -o $(TARGET_DIR)/$(TARGET) $(LIBS)
 	
-all: 
+all: obj
 	@if [ ! -d $(TARGET_DIR) ]; then mkdir $(TARGET_DIR); fi
 	$(CC) $(BIN_CFLAGS) $(SRCS) $(INCLUDES) $(LFLAGS) -o $(TARGET_DIR)/$(TARGET) $(LIBS)
 
