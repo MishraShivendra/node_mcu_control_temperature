@@ -1,4 +1,4 @@
-**Notice:** _This repository is proteccted with [license](https://github.com/MishraShivendra/node_mcu_py_email/blob/master/LICENSE.md), corporate/commercial use is restricted._
+**Notice:** _This repository is protected with [license](https://github.com/MishraShivendra/node_mcu_py_email/blob/master/LICENSE.md), corporate/commercial use is restricted._
 
 # Interfacing Node MCU with LMT84LP temperature sensor and controlling Actuator 
 #### What does it do?
