@@ -5,6 +5,8 @@
 // 
 // Author : Shivendra Mishra
 // Env: gcc 5.4 on Linux Ubuntu 16.04 
+#ifndef INCLUDE_PULL_PUSH_APP_H
+#define INCLUDE_PULL_PUSH_APP_H __file__
 
 #include <iostream>
 #include <vector>
@@ -62,3 +64,5 @@ class pp_daemon
 		void show_args();
 		void cleanup();		
 };
+
+#endif // End of .h file
