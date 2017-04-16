@@ -44,7 +44,7 @@ class pp_daemon
 	sql::Connection *con;
 	sql::Statement *stmt;
 	sql::ResultSet *res;
-	vector <string> temp_values;
+	vector<string> temp_values;
 	map<string, string> valid_attrs;
 
 	public:

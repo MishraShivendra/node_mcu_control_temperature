@@ -15,7 +15,7 @@
 // 2. Ask readings to node - will go to callback - then 
 //    will be written to container.
 // 3. Push readings to DB and cleanup container. 
-pp_daemon::pp_daemon( int argc, char** argv )
+pp_daemon::pp_daemon( int argc, char** argv ):temp_values(4)
 {
 	valid_attrs = { {NODE_ADDRESS, ""}, { NODE_PORT, "" }, 
 			{SQL_ADDRESS, ""}, {SQL_USER, ""},
@@ -104,7 +104,7 @@ void pp_daemon::conn_and_get( void )
 #ifdef DEBUG
 		cout<<"Data["<<i<<"]:"<<data<<endl;
 #endif
-		temp_values.push_back( data );
+		temp_values.at(i) = data;
 		data = "";
 	}
 }
