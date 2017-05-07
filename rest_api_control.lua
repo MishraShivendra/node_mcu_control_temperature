@@ -26,7 +26,7 @@
 -- A few variables to manage Timers
 CONN_TIMEOUT_TIMER=2
 IDLE_TIMEOUT_TIMER=1
--- Timeout periods above two timers
+-- Timeout period for above two timers
 CTT_TIMEOUT=20000
 ITT_TIMEOUT=25000
 
