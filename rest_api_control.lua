@@ -23,6 +23,13 @@
 -- And try to get into network again. That's what 
 -- timer two does.
 
+-- A few variables to manage Timers
+CONN_TIMEOUT_TIMER=2
+IDLE_TIMEOUT_TIMER=1
+-- Timeout periods above two timers
+CTT_TIMEOUT=20000
+ITT_TIMEOUT=25000
+
 -- Let's connect to network. 
 ssid=''
 password=''
@@ -39,13 +46,14 @@ end
 wifi.sta.config(ssid, password); 
 print(wifi.sta.getip()); 
 wifi.sta.autoconnect (1);
--- WLAN related reset alarm. Timeout period 20 sec.
-tmr.alarm (2, 20000, 1, function ( ) 
+-- Set a timer to count idle time. Timeout period 25 sec.
+-- We will reset our self if nobody talks to us periodically. 
+tmr.alarm ( IDLE_TIMEOUT_TIMER, ITT_TIMEOUT, 1, function ( ) 
       node.restart()
 end) 
 
 -- Waiting for router to respond
-tmr.alarm (1, 1000, 1, function ( ) 
+tmr.alarm ( CONN_TIMEOUT_TIMER, CTT_TIMEOUT, 1, function ( ) 
       if wifi.sta.getip ( ) == nil then 
          --print ("Waiting for Wifi connection"); 
       else 
@@ -86,7 +94,6 @@ gpio.mode(l3_select,gpio.OUTPUT)
 gpio.write(l1_select,gpio.HIGH)
 gpio.write(l2_select,gpio.HIGH)
 gpio.write(l3_select,gpio.HIGH)
-
 
 
 -- This function controls power level.
@@ -190,16 +197,18 @@ read_set_dev_conf()
 -- time out for a inactive client.
 srv = net.createServer(net.TCP, 30)
 
--- Server listen on 80
--- Print HTTP headers to console
+-- Server listens on port 80
 srv:listen(80,function(c)  
 	c:on("receive", function(conn, payload)
+		-- Print HTTP headers to console
 		print(payload)
 		temp_flag=0
-		temp=-100
+		temp=0
+		-- Open conf file to record power level
 		if (string.find(payload, "POST /power/") ~= nil) then
 			file.open( "power_level.conf","w+" )
 		end
+		-- Let's set appropriate power level as our master commands.
 		if (string.find(payload, "POST /power/on") ~= nil) then
 			ctrl_power("ON")
 			file.write( "ON" )
@@ -215,6 +224,9 @@ srv:listen(80,function(c)
 		elseif (string.find(payload, "POST /power/three") ~= nil) then
 			ctrl_power("3")
 			file.write( "3" )
+
+		-- Somebody asked for temperature readings, lets return them
+		-- a appropriate reading
 		elseif (string.find(payload, "GET /temp?sensor=1") ~= nil) then
 			temp=record_sensor("1")
 			temp_flag=1
@@ -239,8 +251,8 @@ srv:listen(80,function(c)
 			conn:send("HTTP/1.1 200 OK\n\n");
 		end
 		conn:close()
-		tmr.stop(2); 
-		tmr.alarm (2, 25000, 1, function ( ) 
+		tmr.stop(); 
+		tmr.alarm (IDLE_TIMEOUT_TIMER, ITT_TIMEOUT, 1, function ( ) 
       			node.restart()
 		end)
 	end)

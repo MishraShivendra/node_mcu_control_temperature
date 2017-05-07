@@ -32,6 +32,7 @@
 #define SQL_PASSWORD "sql_password"
 #define NODE_ADDRESS "node_address"
 #define NODE_PORT "node_port"
+#define NO_OF_SENSORS 4
 
 using namespace std;
 

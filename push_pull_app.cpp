@@ -15,7 +15,7 @@
 // 2. Ask readings to node - will go to callback - then 
 //    will be written to container.
 // 3. Push readings to DB and cleanup container. 
-pp_daemon::pp_daemon( int argc, char** argv ):temp_values(4)
+pp_daemon::pp_daemon( int argc, char** argv ):temp_values(NO_OF_SENSORS)
 {
 	valid_attrs = { {NODE_ADDRESS, ""}, { NODE_PORT, "" }, 
 			{SQL_ADDRESS, ""}, {SQL_USER, ""},
@@ -49,7 +49,7 @@ pp_daemon::~pp_daemon( void )
 
 // Callback to get data from node mcu
 static size_t temp_value_write_callback( void *contents, size_t size, 
-					     size_t nmemb, string* data )
+					 size_t nmemb, string* data )
 {
     	size_t newLength = size*nmemb;
     	size_t oldLength = data->size();
@@ -96,7 +96,7 @@ void pp_daemon::get_temperature( const string& sensor_name )
 void pp_daemon::conn_and_get( void )
 {
 	// I have 1 to whatever number of values to get.
-	for( int i = 0; i < 4; ++i ) {
+	for( int i = 0; i < NO_OF_SENSORS; ++i ) {
 		ostringstream ios;
 		ios<<i+1;
 		get_temperature( ios.str() );
@@ -225,7 +225,7 @@ void pp_daemon::parse_cli_load_conf( string file_name, int argc,
 		{"sqlpassword", 1, NULL, 'd'},
 		{"help",        0, NULL, 'h'},
 		{"debug",       0, NULL, 'D'},
-		{NULL,          0, NULL,  0}
+		{NULL,          0, NULL,  0 }
 	};
 	int option;
 	while ( (option = getopt_long( argc, argv, short_option, 
@@ -251,12 +251,12 @@ void pp_daemon::parse_cli_load_conf( string file_name, int argc,
 				break;
 			case ':':
 				cout<<"Argument missing."<<endl;
-				exit(0);
+				exit(EXIT_FAILURE);
 			case '?':
 				ostringstream o_oss;
 				o_oss<<option;
 				cout<<"Invalid option:"<<o_oss.str()<<endl;
-				exit(0);
+				exit(EXIT_FAILURE);
 		} 
 	}
 	
@@ -289,7 +289,7 @@ string pp_daemon::get_home_dir( void )
 // If configuration dir doesn't exists - create it.
 // If configuration file doesn't exist - try to read 
 // CLI and load configuration to container.
-// If any configuration is not then show error and demand it. 
+// If any configuration is unavailable then show error and demand it. 
 void pp_daemon::read_set_conf( int argc, char** argv )
 {
 	
@@ -299,6 +299,7 @@ void pp_daemon::read_set_conf( int argc, char** argv )
 #ifdef __linux__
 	dir = get_home_dir() + "/" + dir;
 	if( test_if_dir_exists( dir ) == false ) {
+		// Creating directory 
 		if( mkdir( dir.c_str(), 0777 ) < 0 ) {
 			perror("Configuration Dir:");
 			cerr<<"Failed to create:"<<dir.c_str()<<endl;
@@ -336,18 +337,22 @@ void pp_daemon::cleanup( )
 {
 	temp_values.erase( temp_values.begin(), temp_values.end() );
 }
-
+pp_daemon* f(int argc, char** argv )
+{
+	pp_daemon *verify = new pp_daemon( argc, argv );
+	return verify;
+}
 int 
 main( int argc, char** argv )
 {
-	pp_daemon verify( argc, argv );
+	pp_daemon *verify = f( argc, argv );
 	while( true ) {
 		cout<<"Getting data.."<<endl;
-		verify.conn_and_get( );
+		verify->conn_and_get( );
 		cout<<"Pushing data to DB.."<<endl;
-		verify.push_data_to_db( );
-		verify.cleanup();
+		verify->push_data_to_db( );
+		verify->cleanup();
 		sleep(1); 
 	}
-	return 0;	
+	return EXIT_SUCCESS;	
 }
