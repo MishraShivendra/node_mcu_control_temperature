@@ -20,11 +20,18 @@ Following objective is achieved:
 |3. | a) Push temperature Data to SQL (And control actuators on web app, plus plot the data) | [push_pull_app.cpp](https://github.com/MishraShivendra/node_mcu_py_email/blob/master/push_pull_app.cpp)
 
 
-
 #### How to use?
 1. Load .lua file to node MCU.
 2. Compile .py file in terminal.
 3. Do "make all" in repository folder. It will generate pull_push_app binary, which have to be started at system boot time (wrap this binary with a script kept in init.d).
+
+#### Supported REST APIs
+|**No.**| **HTTP Method**| **REST APIs** | **Description**|
+|-------|---------------|----------------|----------------|
+| 1. | POST | http://nodemcu/power/{PowerLevel} | Sets power level of actuator. <br/> Valid Power levels are: on, off, one, two and three. |
+| 2. | GET | http://nodemcu/temp?sensor={SensorNo} | Gets temperature from sensor.<br/> Valid sensor numbers for this project are: 1, 2, 3 and 4. |
+
+
 
 #### Block Diagram of circuit
 ![Block Diagram](https://github.com/MishraShivendra/node_mcu_py_email/blob/master/whole.png)
